@@ -28,56 +28,7 @@ def generate_quiz():
         import traceback
         tb = traceback.format_exc()
         print(f"LLM generation error: {e}\n{tb}")
-        llm_output = {
-            "url": "https://en.wikipedia.org/wiki/Varanasi_(film)",
-            "title": "Varanasi (film)",
-            "summary": "Varanasi is a 2019 Indian drama film set in the holy city of Varanasi, exploring themes of spirituality, tradition, and modern challenges.",
-            "quiz": [
-                {
-                "question": "Where is the film 'Varanasi' primarily set?",
-                "options": ["Delhi", "Mumbai", "Varanasi", "Hyderabad"],
-                "answer": "Varanasi"
-                },
-                {
-                "question": "In which year was the film 'Varanasi' released?",
-                "options": ["2017", "2018", "2019", "2020"],
-                "answer": "2019"
-                },
-                {
-                "question": "What genre best describes the film 'Varanasi'?",
-                "options": ["Comedy", "Drama", "Action", "Thriller"],
-                "answer": "Drama"
-                },
-                {
-                "question": "Which theme is central to the film 'Varanasi'?",
-                "options": ["Technology", "Spirituality", "Politics", "Sports"],
-                "answer": "Spirituality"
-                },
-                {
-                "question": "Which Indian city is known as the spiritual backdrop of the film?",
-                "options": ["Chennai", "Varanasi", "Kolkata", "Pune"],
-                "answer": "Varanasi"
-                },
-                {
-                "question": "What cultural aspect does the film 'Varanasi' explore?",
-                "options": ["Festivals", "Tradition", "Cuisine", "Fashion"],
-                "answer": "Tradition"
-                },
-                {
-                "question": "Which challenge is depicted in the film alongside spirituality?",
-                "options": ["Modern challenges", "Sports rivalry", "Political campaigns", "Economic reforms"],
-                "answer": "Modern challenges"
-                }
-            ],
-            "related_topics": [
-                "Indian cinema",
-                "Spirituality in film",
-                "Varanasi city",
-                "Drama films"
-            ]
-            }
-
-        #return jsonify({"error": "LLM generation failed", "detail": str(e), "traceback": tb}), 500
+        return jsonify({"error": "LLM generation failed", "detail": str(e), "traceback": tb}), 500
     print(llm_output)
     response = {
         "url": url,
