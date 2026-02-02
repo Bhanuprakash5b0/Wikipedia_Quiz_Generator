@@ -1,0 +1,19 @@
+# Development dependencies
+-r requirements.txt
+
+# Testing
+pytest==7.4.0
+pytest-flask==1.2.0
+
+# Code quality
+pylint==2.17.4
+black==23.7.0
+flake8==6.0.0
+
+# Debugging
+ipython==8.14.0
+ipdb==0.13.13
+
+# Development tools
+python-dotenv==1.0.0
+watchdog==3.0.0
