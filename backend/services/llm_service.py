@@ -6,14 +6,14 @@ import re
 from db.db import get_connection
 
 llm = ChatGoogleGenerativeAI(
-    model="gemini-2.0-flash",  # Changed from gemini-1.0-pro
+    model="gemini-2.5-flash-lite",  # Changed from gemini-1.0-pro
     google_api_key=GEMINI_API_KEY,
     temperature=0.4
 )
 
 quiz_prompt = PromptTemplate(
     input_variables=["title", "content"],
-    template="""Create a quiz of 1 question based on the following:
+    template="""Create a quiz of 10 questions based on the following:
 Title: {title}
 Content: {content}
 
