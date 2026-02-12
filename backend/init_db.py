@@ -1,8 +1,3 @@
-"""
-Database initialization script.
-Run this once to create the required tables in PostgreSQL.
-"""
-
 import psycopg2
 from config import DATABASE_URL
 
@@ -18,8 +13,7 @@ def init_db():
         # Create quizzes table
         cur.execute("""
             CREATE TABLE IF NOT EXISTS quizzes (
-                id SERIAL PRIMARY KEY,
-                url VARCHAR(500) UNIQUE NOT NULL,
+                url VARCHAR(500) PRIMARY KEY,
                 title VARCHAR(255) NOT NULL,
                 summary TEXT,
                 quiz JSONB NOT NULL,

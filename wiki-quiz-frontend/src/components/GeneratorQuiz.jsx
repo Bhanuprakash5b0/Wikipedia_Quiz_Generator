@@ -13,7 +13,7 @@ function normalizeQuizArray(arr) {
       ...q,
       options,
       answer: answerStr,
-      difficulty: q.difficulty || q.level || "Easy"
+      difficulty: q.difficulty || "Medium"
     };
   });
 }
@@ -105,12 +105,13 @@ function GenerateQuiz() {
             )}
           </div>
 
-          {quizData.related_topics && quizData.related_topics.length > 0 && (
+          {quizData.related_topics && Object.entries(quizData.related_topics).length > 0 && (
             <div className="related-section">
               <h3>Related Topics</h3>
               <ul className="topics-list">
-                {quizData.related_topics.map((topic, i) => (
-                  <li key={i}>{topic}</li>
+                {Object.entries(quizData.related_topics).map(([topic, url],i) => (
+                  <li key={i}><a href={url} target="_blank" rel="noopener noreferrer">
+                    {topic}</a></li>
                 ))}
               </ul>
             </div>

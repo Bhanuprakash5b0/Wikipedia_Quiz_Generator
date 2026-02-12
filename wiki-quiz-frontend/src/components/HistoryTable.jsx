@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import QuizModal from "./QuizModal";
+import {fetchQuizByUrl, fetchQuizHistory} from "../api/quizApi.js";
 
 function HistoryTable() {
   const [history, setHistory] = useState([]);
@@ -15,9 +16,8 @@ function HistoryTable() {
   const fetchHistory = async () => {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5000/api/history");
-      if (!res.ok) throw new Error("Failed to fetch history");
-      const data = await res.json();
+      
+      const data = await fetchQuizHistory();
       setHistory(data);
       setError(null);
     } catch (err) {
@@ -31,11 +31,8 @@ function HistoryTable() {
   const handleDetails = async (quizSummary) => {
     try {
       setLoading(true);
-      const res = await fetch(
-        `http://localhost:5000/api/quiz/${quizSummary.id}`
-      );
-      if (!res.ok) throw new Error("Failed to fetch quiz details");
-      const full = await res.json();
+
+      const full = await fetchQuizByUrl(quizSummary.url);
 
       // Ensure quiz fields are JSON-parsed for older responses
       if (typeof full.quiz === "string") full.quiz = JSON.parse(full.quiz);
@@ -68,7 +65,7 @@ function HistoryTable() {
         </thead>
         <tbody>
           {history.map((quiz) => (
-            <tr key={quiz.id}>
+            <tr key={quiz.url}>
               <td>{quiz.title}</td>
               <td>
                 <a href={quiz.url} target="_blank" rel="noopener noreferrer">

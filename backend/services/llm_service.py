@@ -13,7 +13,7 @@ llm = ChatGoogleGenerativeAI(
 
 quiz_prompt = PromptTemplate(
     input_variables=["title", "content"],
-    template="""Create a quiz of 10 questions based on the following:
+    template="""Create a quiz of 10 questions, with 8 easy-medium and two hard questions based on the following format:
 Title: {title}
 Content: {content}
 
@@ -24,10 +24,11 @@ Return ONLY valid JSON in this exact format:
       "question": "Question text?",
       "options": ["Option A", "Option B", "Option C", "Option D"],
       "correct_answer": 0,
-      "explanation": "Explanation text"
+      "explanation": "Explanation text",
+      "difficulty":"Easy, Medium or Hard"
     }}
   ],
-  "related_topics": ["Topic1", "Topic2", "Topic3"]
+  "related_topics":{{"Topic1":"url1", "Topic2":"url2", "Topic3":"url3"}},
 }}
 
 Do not include any text before or after the JSON. Return only the JSON object."""
@@ -37,6 +38,7 @@ Do not include any text before or after the JSON. Return only the JSON object.""
 _quiz_cache = {}
 
 def generate_quiz_from_text(title, content):
+    
     """Generate a quiz from text using Gemini API."""
     prompt = quiz_prompt.format(
         title=title,
@@ -69,8 +71,9 @@ def generate_quiz_from_text(title, content):
                 raise ValueError("Each question must have exactly 4 options")
             if not isinstance(q["correct_answer"], int) or not (0 <= q["correct_answer"] < 4):
                 raise ValueError("Correct answer index must be 0-3")
-        
+        print(parsed["related_topics"])
         return parsed
+    
     except json.JSONDecodeError as e:
         raise ValueError(f"Invalid JSON returned by LLM: {str(e)}")
     except ValueError as e:
@@ -90,7 +93,7 @@ def save_quiz(data):
         quiz = EXCLUDED.quiz,
         related_topics = EXCLUDED.related_topics,
         updated_at = CURRENT_TIMESTAMP
-    RETURNING id;
+    RETURNING url;
     """
 
     try:
@@ -99,17 +102,16 @@ def save_quiz(data):
             data["title"],
             data["summary"],
             json.dumps(data["quiz"]),  # Ensure it's JSON string
-            json.dumps(data.get("related_topics", []))  # Ensure it's JSON string
+            json.dumps(data["related_topics"])  # Ensure it's JSON string
         ))
         
         quiz_id = cur.fetchone()[0]
         conn.commit()
         
         # Update cache
-        _quiz_cache[quiz_id] = data
         _quiz_cache[data["url"]] = data
         
-        return quiz_id
+        return 200
     except Exception as e:
         conn.rollback()
         raise e
@@ -124,7 +126,7 @@ def fetch_all_quizzes():
 
     try:
         cur.execute("""
-            SELECT id, url, title, created_at
+            SELECT url, title, created_at
             FROM quizzes
             ORDER BY created_at DESC
         """)
@@ -135,59 +137,16 @@ def fetch_all_quizzes():
         cur.close()
         conn.close()
 
-def fetch_quiz_by_id(quiz_id):
-    """Fetch quiz by ID and parse JSON fields."""
-    # Check cache first
-    if quiz_id in _quiz_cache:
-        return _quiz_cache[quiz_id]
+def fetch_quiz_by_url(url):
     
     conn = get_connection()
     cur = conn.cursor()
 
     try:
         cur.execute("""
-            SELECT id, url, title, summary, quiz, related_topics
+            SELECT url, title, summary, quiz, related_topics, created_at
             FROM quizzes
             WHERE id = %s
-        """, (quiz_id,))
-
-        row = cur.fetchone()
-        
-        if not row:
-            return None
-        
-        # Parse JSON fields
-        quiz_data = {
-            "id": row[0],
-            "url": row[1],
-            "title": row[2],
-            "summary": row[3],
-            "quiz": json.loads(row[4]) if isinstance(row[4], str) else row[4],
-            "related_topics": json.loads(row[5]) if isinstance(row[5], str) else row[5]
-        }
-        
-        # Cache the result
-        _quiz_cache[quiz_id] = quiz_data
-        
-        return quiz_data
-    finally:
-        cur.close()
-        conn.close()
-
-def fetch_quiz_by_url(url):
-    """Fetch quiz by URL for deduplication."""
-    # Check cache first
-    if url in _quiz_cache:
-        return _quiz_cache[url]
-    
-    conn = get_connection()
-    cur = conn.cursor()
-
-    try:
-        cur.execute("""
-            SELECT id, url, title, summary, quiz, related_topics
-            FROM quizzes
-            WHERE url = %s
         """, (url,))
 
         row = cur.fetchone()
@@ -197,17 +156,15 @@ def fetch_quiz_by_url(url):
         
         # Parse JSON fields
         quiz_data = {
-            "id": row[0],
-            "url": row[1],
-            "title": row[2],
-            "summary": row[3],
-            "quiz": json.loads(row[4]) if isinstance(row[4], str) else row[4],
-            "related_topics": json.loads(row[5]) if isinstance(row[5], str) else row[5]
+            "url": row[0],
+            "title": row[1],
+            "summary": row[2],
+            "quiz": json.loads(row[3]) if isinstance(row[3], str) else row[3],
+            "related_topics": json.loads(row[4]) if isinstance(row[4], str) else row[4],
+            "created_at":row[5]
         }
         
         # Cache the result
-        _quiz_cache[url] = quiz_data
-        _quiz_cache[row[0]] = quiz_data
         
         return quiz_data
     finally:

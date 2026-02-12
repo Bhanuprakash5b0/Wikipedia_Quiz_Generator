@@ -1,8 +1,6 @@
 import json
 from db.db import get_connection
 
-
-
 def save_quiz(data):
     conn = get_connection()
     cur = conn.cursor()
@@ -30,7 +28,7 @@ def fetch_all_quizzes():
     cur = conn.cursor()
 
     cur.execute("""
-        SELECT id, url, title, created_at
+        SELECT url, title, created_at
         FROM quizzes
         ORDER BY created_at DESC
     """)
@@ -41,15 +39,15 @@ def fetch_all_quizzes():
     conn.close()
 
     return rows
-def fetch_quiz_by_id(quiz_id):
+def fetch_quiz_by_url(uRl):
     conn = get_connection()
     cur = conn.cursor()
 
     cur.execute("""
         SELECT url, title, summary, quiz, related_topics
         FROM quizzes
-        WHERE id = %s
-    """, (quiz_id,))
+        WHERE url like %s
+    """, (uRl,))
 
     row = cur.fetchone()
 

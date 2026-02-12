@@ -47,12 +47,12 @@ export const fetchQuizHistory = async () => {
 
 /**
  * Fetch a specific quiz by ID
- * @param {string|number} quizId - The quiz ID
+ * @param {string|number} quizUrl - The quiz ID
  * @returns {Promise<Object>} Quiz details
  */
-export const fetchQuizById = async (quizId) => {
+export const fetchQuizByUrl = async (quizUrl) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/quiz/${quizId}`);
+    const response = await fetch(`${API_BASE_URL}/quiz/${quizUrl}`);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

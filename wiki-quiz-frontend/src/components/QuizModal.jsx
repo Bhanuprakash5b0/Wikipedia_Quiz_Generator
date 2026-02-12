@@ -28,7 +28,7 @@ function QuizModal({ quiz, onClose }) {
   const relatedTopics =
     typeof quiz.related_topics === "string"
       ? JSON.parse(quiz.related_topics)
-      : quiz.related_topics || [];
+      : quiz.related_topics || {};
 
   const quizData = normalizeQuizArray(Array.isArray(quizDataRaw) ? quizDataRaw : []);
 
