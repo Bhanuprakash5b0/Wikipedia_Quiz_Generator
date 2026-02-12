@@ -1,5 +1,5 @@
-const API_BASE_URL = "http://localhost:5000/api";
-
+//const API_BASE_URL = "http://localhost:5000/api";
+API_BASE_URL=process.env.URL
 /**
  * Generate a quiz from a Wikipedia URL
  * @param {string} url - The Wikipedia URL
