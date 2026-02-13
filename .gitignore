@@ -57,3 +57,5 @@ logs/
 *.db
 *.sqlite
 *.sqlite3
+
+backend\req.txt

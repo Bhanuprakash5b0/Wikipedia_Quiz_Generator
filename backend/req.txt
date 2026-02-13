@@ -1,0 +1,12 @@
+flask
+flask-cors
+flask-caching
+gunicorn
+requests
+beautifulsoup4
+python-dotenv
+psycopg2-binary
+langchain
+langchain-google-genai
+langchain-google-vertexai
+google-generativeai

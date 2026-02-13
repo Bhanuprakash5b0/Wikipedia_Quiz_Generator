@@ -74,7 +74,7 @@ function HistoryTable() {
               </td>
               <td>{new Date(quiz.created_at).toLocaleString()}</td>
               <td>
-                <button onClick={() => handleDetails(quiz)}>Details</button>
+                <button disabled onClick={() => handleDetails(quiz)}>Details</button>
               </td>
             </tr>
           ))}
